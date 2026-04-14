@@ -192,6 +192,46 @@ for (const county in data) {
 <footer>
     <p>© 2026 Kenya Presidential Election Live Reporting System</p>
 </footer>
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { 
+    getFirestore, 
+    collection, 
+    onSnapshot 
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+  // 🔹 Paste your Firebase config here
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // Listen for real-time updates
+  const resultsRef = collection(db, "results");
+
+  onSnapshot(resultsRef, (snapshot) => {
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      const id = doc.id;
+
+      const cellA = document.getElementById(id + "_A");
+      const cellB = document.getElementById(id + "_B");
+      const statusCell = document.getElementById(id + "_status");
+
+      if (cellA) cellA.textContent = data.candidateA ?? 0;
+      if (cellB) cellB.textContent = data.candidateB ?? 0;
+      if (statusCell) statusCell.textContent = data.status ?? "Updating...";
+    });
+  });
+</script>
 </body>
 </html>
